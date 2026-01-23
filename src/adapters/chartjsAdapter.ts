@@ -248,12 +248,12 @@ function createScatterConfig(data: ParsedData, config: ChartConfig) {
                 ...baseOptions,
                 scales: {
                     x: {
-                        ...baseOptions.scales?.x,
+                        ...(baseOptions.scales?.x as any),
                         type: 'linear' as const,
                         title: { display: true, text: xAxis, color: '#94a3b8' },
                     },
                     y: {
-                        ...baseOptions.scales?.y,
+                        ...(baseOptions.scales?.y as any),
                         type: 'linear' as const,
                         title: { display: true, text: yAxis[0], color: '#94a3b8' },
                     },
@@ -330,12 +330,12 @@ function createBubbleConfig(data: ParsedData, config: ChartConfig) {
                 ...baseOptions,
                 scales: {
                     x: {
-                        ...baseOptions.scales?.x,
+                        ...(baseOptions.scales?.x as any),
                         type: 'linear' as const,
                         title: { display: true, text: xAxis, color: '#94a3b8' },
                     },
                     y: {
-                        ...baseOptions.scales?.y,
+                        ...(baseOptions.scales?.y as any),
                         type: 'linear' as const,
                         title: { display: true, text: yAxis[0], color: '#94a3b8' },
                     },
@@ -361,12 +361,12 @@ function createBubbleConfig(data: ParsedData, config: ChartConfig) {
             ...baseOptions,
             scales: {
                 x: {
-                    ...baseOptions.scales?.x,
+                    ...(baseOptions.scales?.x as any),
                     type: 'linear' as const,
                     title: { display: true, text: xAxis, color: '#94a3b8' },
                 },
                 y: {
-                    ...baseOptions.scales?.y,
+                    ...(baseOptions.scales?.y as any),
                     type: 'linear' as const,
                     title: { display: true, text: yAxis[0], color: '#94a3b8' },
                 },

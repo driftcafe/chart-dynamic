@@ -282,7 +282,7 @@ function createScatterConfig(data: ParsedData, config: ChartConfig) {
                 markers: { size: 10 },
                 xaxis: {
                     ...baseOptions.xaxis,
-                    type: 'numeric',
+                    type: 'numeric' as const,
                     title: { text: xAxis, style: { color: '#94a3b8' } },
                 },
                 yaxis: {
@@ -304,7 +304,7 @@ function createScatterConfig(data: ParsedData, config: ChartConfig) {
             markers: { size: 10 },
             xaxis: {
                 ...baseOptions.xaxis,
-                type: 'numeric',
+                type: 'numeric' as const,
                 title: { text: xAxis, style: { color: '#94a3b8' } },
             },
             yaxis: {
@@ -359,7 +359,7 @@ function createBubbleConfig(data: ParsedData, config: ChartConfig) {
                 },
                 xaxis: {
                     ...baseOptions.xaxis,
-                    type: 'numeric',
+                    type: 'numeric' as const,
                     title: { text: xAxis, style: { color: '#94a3b8' } },
                 },
                 yaxis: {
@@ -380,7 +380,7 @@ function createBubbleConfig(data: ParsedData, config: ChartConfig) {
             },
             xaxis: {
                 ...baseOptions.xaxis,
-                type: 'numeric',
+                type: 'numeric' as const,
                 title: { text: xAxis, style: { color: '#94a3b8' } },
             },
             yaxis: {
@@ -425,7 +425,7 @@ function createPieConfig(data: ParsedData, config: ChartConfig, isDoughnut: bool
             },
             legend: {
                 ...baseOptions.legend,
-                position: 'bottom',
+                position: 'bottom' as const,
             },
         },
         series: values,

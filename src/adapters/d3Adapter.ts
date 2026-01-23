@@ -438,7 +438,7 @@ function renderLineChart(container: HTMLElement, data: ParsedData, config: Chart
 function renderAreaChart(container: HTMLElement, data: ParsedData, config: ChartConfig) {
     const margin = { top: 20, right: 30, bottom: 80, left: 60 };
     const { svg, width, height } = createSvg(container, margin);
-    const tooltip = addTooltip(container);
+    const _tooltip = addTooltip(container);
 
     const { categories, series } = aggregateData(data, config);
 
