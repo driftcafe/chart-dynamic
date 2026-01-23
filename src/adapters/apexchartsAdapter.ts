@@ -1,5 +1,6 @@
 import type { ApexOptions } from 'apexcharts';
 import type { ParsedData, ChartConfig, ChartType } from '../types/types';
+import { parseNumeric } from '../utils/csvParser';
 
 /**
  * Aggregate data for ApexCharts
@@ -21,7 +22,7 @@ function aggregateData(
                     const matchingRows = data.rows.filter(
                         row => String(row[xAxis]) === cat && String(row[seriesColumn]) === seriesVal
                     );
-                    return aggregate(matchingRows.map(r => Number(r[metric]) || 0), aggregation);
+                    return aggregate(matchingRows.map(r => parseNumeric(r[metric])), aggregation);
                 });
 
                 return {
@@ -36,7 +37,7 @@ function aggregateData(
         const series = yAxis.map(metric => {
             const seriesData = categories.map(cat => {
                 const matchingRows = data.rows.filter(row => String(row[xAxis]) === cat);
-                return aggregate(matchingRows.map(r => Number(r[metric]) || 0), aggregation);
+                return aggregate(matchingRows.map(r => parseNumeric(r[metric])), aggregation);
             });
 
             return { name: metric, data: seriesData };
@@ -266,8 +267,8 @@ function createScatterConfig(data: ParsedData, config: ChartConfig) {
             return {
                 name: seriesVal,
                 data: filteredRows.map(row => ({
-                    x: Number(row[xAxis]) || 0,
-                    y: Number(row[yAxis[0]]) || 0,
+                    x: parseNumeric(row[xAxis]),
+                    y: parseNumeric(row[yAxis[0]]),
                 })),
             };
         });
@@ -315,8 +316,8 @@ function createScatterConfig(data: ParsedData, config: ChartConfig) {
         series: [{
             name: 'Data',
             data: data.rows.map(row => ({
-                x: Number(row[xAxis]) || 0,
-                y: Number(row[yAxis[0]]) || 0,
+                x: parseNumeric(row[xAxis]),
+                y: parseNumeric(row[yAxis[0]]),
             })),
         }],
     };
@@ -326,7 +327,7 @@ function createBubbleConfig(data: ParsedData, config: ChartConfig) {
     const { xAxis, yAxis, size, series: seriesColumn } = config;
     const sizeColumn = size || yAxis[1] || yAxis[0];
 
-    const sizeValues = data.rows.map(row => Number(row[sizeColumn]) || 0);
+    const sizeValues = data.rows.map(row => parseNumeric(row[sizeColumn]));
     const minSize = Math.min(...sizeValues);
     const maxSize = Math.max(...sizeValues);
     const sizeRange = maxSize - minSize || 1;
@@ -343,9 +344,9 @@ function createBubbleConfig(data: ParsedData, config: ChartConfig) {
             return {
                 name: seriesVal,
                 data: filteredRows.map(row => ({
-                    x: Number(row[xAxis]) || 0,
-                    y: Number(row[yAxis[0]]) || 0,
-                    z: normalizeSize(Number(row[sizeColumn]) || 0),
+                    x: parseNumeric(row[xAxis]),
+                    y: parseNumeric(row[yAxis[0]]),
+                    z: normalizeSize(parseNumeric(row[sizeColumn])),
                 })),
             };
         });
@@ -391,9 +392,9 @@ function createBubbleConfig(data: ParsedData, config: ChartConfig) {
         series: [{
             name: 'Data',
             data: data.rows.map(row => ({
-                x: Number(row[xAxis]) || 0,
-                y: Number(row[yAxis[0]]) || 0,
-                z: normalizeSize(Number(row[sizeColumn]) || 0),
+                x: parseNumeric(row[xAxis]),
+                y: parseNumeric(row[yAxis[0]]),
+                z: normalizeSize(parseNumeric(row[sizeColumn])),
             })),
         }],
     };
@@ -441,7 +442,7 @@ function createRadarConfig(data: ParsedData, config: ChartConfig) {
         const row = data.rows.find(r => String(r[xAxis]) === entity);
         return {
             name: entity,
-            data: yAxis.map(metric => Number(row?.[metric]) || 0),
+            data: yAxis.map(metric => parseNumeric(row?.[metric])),
         };
     });
 
@@ -487,7 +488,7 @@ function createHeatmapConfig(data: ParsedData, config: ChartConfig) {
             const matchingRows = data.rows.filter(
                 row => String(row[xAxis]) === xCat && String(row[yColumn]) === yCat
             );
-            return matchingRows.reduce((sum, row) => sum + (Number(row[valueColumn]) || 0), 0);
+            return matchingRows.reduce((sum, row) => sum + (parseNumeric(row[valueColumn])), 0);
         }),
     }));
 

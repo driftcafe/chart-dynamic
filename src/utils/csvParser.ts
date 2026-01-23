@@ -2,6 +2,36 @@ import Papa from 'papaparse';
 import type { ParsedData, ColumnMeta, ColumnType } from '../types/types';
 
 /**
+ * Robust numeric parser that handles formatted numbers
+ * Strips common formatting characters like $, %, and commas
+ */
+export function parseNumeric(value: unknown): number {
+    if (typeof value === 'number') return value;
+    if (value === null || value === undefined || value === '') return 0;
+
+    // Strip common formatting: $, %, commas
+    const cleaned = String(value).replace(/[$,%]/g, '').replace(/,/g, '').trim();
+    const num = Number(cleaned);
+
+    return isNaN(num) || !isFinite(num) ? 0 : num;
+}
+
+/**
+ * Check if a value can be parsed as numeric
+ */
+function isNumericValue(value: unknown): boolean {
+    if (typeof value === 'number') return true;
+    if (value === null || value === undefined || value === '') return false;
+
+    // Try to parse with formatting stripped
+    const cleaned = String(value).replace(/[$,%]/g, '').replace(/,/g, '').trim();
+    const num = Number(cleaned);
+
+    return !isNaN(num) && isFinite(num);
+}
+
+
+/**
  * Detect the type of a column based on sample values
  */
 function detectColumnType(values: unknown[]): ColumnType {
@@ -16,11 +46,8 @@ function detectColumnType(values: unknown[]): ColumnType {
     );
     if (allBoolean) return 'boolean';
 
-    // Check if all values are numeric
-    const allNumeric = nonNullValues.every(v => {
-        const num = Number(v);
-        return !isNaN(num) && isFinite(num);
-    });
+    // Check if all values are numeric (using robust parser)
+    const allNumeric = nonNullValues.every(v => isNumericValue(v));
     if (allNumeric) return 'numeric';
 
     // Check if values look like dates

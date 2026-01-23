@@ -1,5 +1,6 @@
 import type { Data, Layout, Config } from 'plotly.js';
 import type { ParsedData, ChartConfig } from '../types/types';
+import { parseNumeric } from '../utils/csvParser';
 
 /**
  * Aggregate data for Plotly charts
@@ -21,7 +22,7 @@ function aggregateData(
                     const matchingRows = data.rows.filter(
                         row => String(row[xAxis]) === cat && String(row[seriesColumn]) === seriesVal
                     );
-                    return aggregate(matchingRows.map(r => Number(r[metric]) || 0), aggregation);
+                    return aggregate(matchingRows.map(r => parseNumeric(r[metric])), aggregation);
                 });
 
                 return {
@@ -36,7 +37,7 @@ function aggregateData(
         const series = yAxis.map(metric => {
             const values = categories.map(cat => {
                 const matchingRows = data.rows.filter(row => String(row[xAxis]) === cat);
-                return aggregate(matchingRows.map(r => Number(r[metric]) || 0), aggregation);
+                return aggregate(matchingRows.map(r => parseNumeric(r[metric])), aggregation);
             });
 
             return { name: metric, values };
@@ -232,8 +233,8 @@ function createScatterData(data: ParsedData, config: ChartConfig) {
                 type: 'scatter' as const,
                 mode: 'markers' as const,
                 name: seriesVal,
-                x: filteredRows.map(row => Number(row[xAxis]) || 0),
-                y: filteredRows.map(row => Number(row[yAxis[0]]) || 0),
+                x: filteredRows.map(row => parseNumeric(row[xAxis])),
+                y: filteredRows.map(row => parseNumeric(row[yAxis[0]])),
                 marker: { color: colors[i % colors.length], size: 10 },
             };
         });
@@ -252,8 +253,8 @@ function createScatterData(data: ParsedData, config: ChartConfig) {
     const traces: Data[] = [{
         type: 'scatter' as const,
         mode: 'markers' as const,
-        x: data.rows.map(row => Number(row[xAxis]) || 0),
-        y: data.rows.map(row => Number(row[yAxis[0]]) || 0),
+        x: data.rows.map(row => parseNumeric(row[xAxis])),
+        y: data.rows.map(row => parseNumeric(row[yAxis[0]])),
         marker: { color: colors[0], size: 10 },
     }];
 
@@ -272,7 +273,7 @@ function createBubbleData(data: ParsedData, config: ChartConfig) {
     const { xAxis, yAxis, size, series: seriesColumn } = config;
     const sizeColumn = size || yAxis[1] || yAxis[0];
 
-    const sizeValues = data.rows.map(row => Number(row[sizeColumn]) || 0);
+    const sizeValues = data.rows.map(row => parseNumeric(row[sizeColumn]));
     const minSize = Math.min(...sizeValues);
     const maxSize = Math.max(...sizeValues);
     const sizeRange = maxSize - minSize || 1;
@@ -290,11 +291,11 @@ function createBubbleData(data: ParsedData, config: ChartConfig) {
                 type: 'scatter' as const,
                 mode: 'markers' as const,
                 name: seriesVal,
-                x: filteredRows.map(row => Number(row[xAxis]) || 0),
-                y: filteredRows.map(row => Number(row[yAxis[0]]) || 0),
+                x: filteredRows.map(row => parseNumeric(row[xAxis])),
+                y: filteredRows.map(row => parseNumeric(row[yAxis[0]])),
                 marker: {
                     color: colors[i % colors.length],
-                    size: filteredRows.map(row => normalizeSize(Number(row[sizeColumn]) || 0)),
+                    size: filteredRows.map(row => normalizeSize(parseNumeric(row[sizeColumn]))),
                     sizemode: 'diameter' as const,
                 },
                 text: filteredRows.map(row => `${sizeColumn}: ${row[sizeColumn]}`),
@@ -315,11 +316,11 @@ function createBubbleData(data: ParsedData, config: ChartConfig) {
     const traces: Data[] = [{
         type: 'scatter' as const,
         mode: 'markers' as const,
-        x: data.rows.map(row => Number(row[xAxis]) || 0),
-        y: data.rows.map(row => Number(row[yAxis[0]]) || 0),
+        x: data.rows.map(row => parseNumeric(row[xAxis])),
+        y: data.rows.map(row => parseNumeric(row[yAxis[0]])),
         marker: {
             color: colors[0],
-            size: data.rows.map(row => normalizeSize(Number(row[sizeColumn]) || 0)),
+            size: data.rows.map(row => normalizeSize(parseNumeric(row[sizeColumn]))),
             sizemode: 'diameter' as const,
         },
         text: data.rows.map(row => `${sizeColumn}: ${row[sizeColumn]}`),
@@ -378,7 +379,7 @@ function createHeatmapData(data: ParsedData, config: ChartConfig) {
             const matchingRows = data.rows.filter(
                 row => String(row[xAxis]) === xCat && String(row[yColumn]) === yCat
             );
-            return matchingRows.reduce((sum, row) => sum + (Number(row[valueColumn]) || 0), 0);
+            return matchingRows.reduce((sum, row) => sum + (parseNumeric(row[valueColumn])), 0);
         })
     );
 

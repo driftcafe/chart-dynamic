@@ -1,5 +1,6 @@
 import type { ChartData, ChartOptions } from 'chart.js';
 import type { ParsedData, ChartConfig, ChartType } from '../types/types';
+import { parseNumeric } from '../utils/csvParser';
 
 /**
  * Aggregate data for Chart.js charts
@@ -21,7 +22,7 @@ function aggregateData(
                     const matchingRows = data.rows.filter(
                         row => String(row[xAxis]) === label && String(row[seriesColumn]) === seriesVal
                     );
-                    return aggregate(matchingRows.map(r => Number(r[metric]) || 0), aggregation);
+                    return aggregate(matchingRows.map(r => parseNumeric(r[metric])), aggregation);
                 });
 
                 return {
@@ -36,7 +37,7 @@ function aggregateData(
         const datasets = yAxis.map(metric => {
             const dataPoints = labels.map(label => {
                 const matchingRows = data.rows.filter(row => String(row[xAxis]) === label);
-                return aggregate(matchingRows.map(r => Number(r[metric]) || 0), aggregation);
+                return aggregate(matchingRows.map(r => parseNumeric(r[metric])), aggregation);
             });
 
             return { label: metric, data: dataPoints };
@@ -231,8 +232,8 @@ function createScatterConfig(data: ParsedData, config: ChartConfig) {
             return {
                 label: seriesVal,
                 data: filteredRows.map(row => ({
-                    x: Number(row[xAxis]) || 0,
-                    y: Number(row[yAxis[0]]) || 0,
+                    x: parseNumeric(row[xAxis]),
+                    y: parseNumeric(row[yAxis[0]]),
                 })),
                 backgroundColor: colors[i % colors.length].bg,
                 borderColor: colors[i % colors.length].border,
@@ -266,8 +267,8 @@ function createScatterConfig(data: ParsedData, config: ChartConfig) {
             datasets: [{
                 label: 'Data',
                 data: data.rows.map(row => ({
-                    x: Number(row[xAxis]) || 0,
-                    y: Number(row[yAxis[0]]) || 0,
+                    x: parseNumeric(row[xAxis]),
+                    y: parseNumeric(row[yAxis[0]]),
                 })),
                 backgroundColor: colors[0].bg,
                 borderColor: colors[0].border,
@@ -297,7 +298,7 @@ function createBubbleConfig(data: ParsedData, config: ChartConfig) {
     const { xAxis, yAxis, size, series: seriesColumn } = config;
     const sizeColumn = size || yAxis[1] || yAxis[0];
 
-    const sizeValues = data.rows.map(row => Number(row[sizeColumn]) || 0);
+    const sizeValues = data.rows.map(row => parseNumeric(row[sizeColumn]));
     const minSize = Math.min(...sizeValues);
     const maxSize = Math.max(...sizeValues);
     const sizeRange = maxSize - minSize || 1;
@@ -314,9 +315,9 @@ function createBubbleConfig(data: ParsedData, config: ChartConfig) {
             return {
                 label: seriesVal,
                 data: filteredRows.map(row => ({
-                    x: Number(row[xAxis]) || 0,
-                    y: Number(row[yAxis[0]]) || 0,
-                    r: normalizeSize(Number(row[sizeColumn]) || 0),
+                    x: parseNumeric(row[xAxis]),
+                    y: parseNumeric(row[yAxis[0]]),
+                    r: normalizeSize(parseNumeric(row[sizeColumn])),
                 })),
                 backgroundColor: colors[i % colors.length].bg,
                 borderColor: colors[i % colors.length].border,
@@ -348,9 +349,9 @@ function createBubbleConfig(data: ParsedData, config: ChartConfig) {
             datasets: [{
                 label: 'Data',
                 data: data.rows.map(row => ({
-                    x: Number(row[xAxis]) || 0,
-                    y: Number(row[yAxis[0]]) || 0,
-                    r: normalizeSize(Number(row[sizeColumn]) || 0),
+                    x: parseNumeric(row[xAxis]),
+                    y: parseNumeric(row[yAxis[0]]),
+                    r: normalizeSize(parseNumeric(row[sizeColumn])),
                 })),
                 backgroundColor: colors[0].bg,
                 borderColor: colors[0].border,
@@ -409,7 +410,7 @@ function createRadarConfig(data: ParsedData, config: ChartConfig) {
         const row = data.rows.find(r => String(r[xAxis]) === entity);
         return {
             label: entity,
-            data: yAxis.map(metric => Number(row?.[metric]) || 0),
+            data: yAxis.map(metric => parseNumeric(row?.[metric])),
             backgroundColor: colors[i % colors.length].bg,
             borderColor: colors[i % colors.length].border,
             borderWidth: 2,

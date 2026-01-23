@@ -1,5 +1,6 @@
 import * as d3 from 'd3';
 import type { ParsedData, ChartConfig, ChartType } from '../types/types';
+import { parseNumeric } from '../utils/csvParser';
 
 const colors = ['#6366f1', '#8b5cf6', '#06b6d4', '#10b981', '#f59e0b', '#ef4444', '#ec4899'];
 
@@ -30,7 +31,7 @@ function aggregateData(
                     const matchingRows = data.rows.filter(
                         row => String(row[xAxis]) === cat && String(row[seriesColumn]) === seriesVal
                     );
-                    return aggregate(matchingRows.map(r => Number(r[metric]) || 0), aggregation);
+                    return aggregate(matchingRows.map(r => parseNumeric(r[metric])), aggregation);
                 });
 
                 return {
@@ -45,7 +46,7 @@ function aggregateData(
         const series = yAxis.map(metric => {
             const values = categories.map(cat => {
                 const matchingRows = data.rows.filter(row => String(row[xAxis]) === cat);
-                return aggregate(matchingRows.map(r => Number(r[metric]) || 0), aggregation);
+                return aggregate(matchingRows.map(r => parseNumeric(r[metric])), aggregation);
             });
 
             return { name: metric, values };
@@ -553,8 +554,8 @@ function renderScatterChart(container: HTMLElement, data: ParsedData, config: Ch
                 .enter()
                 .append('circle')
                 .attr('class', `dot-${i}`)
-                .attr('cx', d => x(Number(d[xAxis]) || 0))
-                .attr('cy', d => y(Number(d[yAxis[0]]) || 0))
+                .attr('cx', d => x(parseNumeric(d[xAxis])))
+                .attr('cy', d => y(parseNumeric(d[yAxis[0]])))
                 .attr('r', 8)
                 .attr('fill', colors[i % colors.length])
                 .attr('opacity', 0.7)
@@ -582,8 +583,8 @@ function renderScatterChart(container: HTMLElement, data: ParsedData, config: Ch
             .enter()
             .append('circle')
             .attr('class', 'dot')
-            .attr('cx', d => x(Number(d[xAxis]) || 0))
-            .attr('cy', d => y(Number(d[yAxis[0]]) || 0))
+            .attr('cx', d => x(parseNumeric(d[xAxis])))
+            .attr('cy', d => y(parseNumeric(d[yAxis[0]])))
             .attr('r', 8)
             .attr('fill', colors[0])
             .attr('opacity', 0.7)

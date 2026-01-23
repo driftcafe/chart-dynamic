@@ -1,5 +1,6 @@
 import type { EChartsOption } from 'echarts';
 import type { ParsedData, ChartConfig } from '../types/types';
+import { parseNumeric } from '../utils/csvParser';
 
 /**
  * Aggregate data for chart rendering
@@ -23,7 +24,7 @@ function aggregateData(
                     const matchingRows = data.rows.filter(
                         row => String(row[xAxis]) === cat && String(row[seriesColumn]) === seriesVal
                     );
-                    return aggregate(matchingRows.map(r => Number(r[metric]) || 0), aggregation);
+                    return aggregate(matchingRows.map(r => parseNumeric(r[metric])), aggregation);
                 });
 
                 return {
@@ -39,7 +40,7 @@ function aggregateData(
         const series = yAxis.map(metric => {
             const seriesData = categories.map(cat => {
                 const matchingRows = data.rows.filter(row => String(row[xAxis]) === cat);
-                return aggregate(matchingRows.map(r => Number(r[metric]) || 0), aggregation);
+                return aggregate(matchingRows.map(r => parseNumeric(r[metric])), aggregation);
             });
 
             return { name: metric, data: seriesData };
@@ -265,7 +266,7 @@ function createScatterOption(data: ParsedData, config: ChartConfig, base: EChart
                 type: 'scatter',
                 data: data.rows
                     .filter(row => String(row[seriesColumn]) === seriesVal)
-                    .map(row => [Number(row[xAxis]) || 0, Number(row[yAxis[0]]) || 0]),
+                    .map(row => [parseNumeric(row[xAxis]), parseNumeric(row[yAxis[0]])]),
                 symbolSize: 12,
                 emphasis: { focus: 'series' },
             })),
@@ -289,7 +290,7 @@ function createScatterOption(data: ParsedData, config: ChartConfig, base: EChart
         },
         series: [{
             type: 'scatter',
-            data: data.rows.map(row => [Number(row[xAxis]) || 0, Number(row[yAxis[0]]) || 0]),
+            data: data.rows.map(row => [parseNumeric(row[xAxis]), parseNumeric(row[yAxis[0]])]),
             symbolSize: 12,
         }],
     };
@@ -302,7 +303,7 @@ function createBubbleOption(data: ParsedData, config: ChartConfig, base: ECharts
     const colors = ['#6366f1', '#8b5cf6', '#06b6d4', '#10b981', '#f59e0b', '#ef4444', '#ec4899'];
 
     // Calculate size range
-    const sizeValues = data.rows.map(row => Number(row[sizeColumn]) || 0);
+    const sizeValues = data.rows.map(row => parseNumeric(row[sizeColumn]));
     const minSize = Math.min(...sizeValues);
     const maxSize = Math.max(...sizeValues);
     const sizeRange = maxSize - minSize || 1;
@@ -335,8 +336,8 @@ function createBubbleOption(data: ParsedData, config: ChartConfig, base: ECharts
                 data: data.rows
                     .filter(row => String(row[seriesColumn]) === seriesVal)
                     .map(row => ({
-                        value: [Number(row[xAxis]) || 0, Number(row[yAxis[0]]) || 0],
-                        symbolSize: getSymbolSize(Number(row[sizeColumn]) || 0),
+                        value: [parseNumeric(row[xAxis]), parseNumeric(row[yAxis[0]])],
+                        symbolSize: getSymbolSize(parseNumeric(row[sizeColumn])),
                     })),
                 emphasis: { focus: 'series' },
             })),
@@ -360,8 +361,8 @@ function createBubbleOption(data: ParsedData, config: ChartConfig, base: ECharts
         series: [{
             type: 'scatter',
             data: data.rows.map(row => ({
-                value: [Number(row[xAxis]) || 0, Number(row[yAxis[0]]) || 0],
-                symbolSize: getSymbolSize(Number(row[sizeColumn]) || 0),
+                value: [parseNumeric(row[xAxis]), parseNumeric(row[yAxis[0]])],
+                symbolSize: getSymbolSize(parseNumeric(row[sizeColumn])),
             })),
         }],
     };
@@ -376,7 +377,7 @@ function createPieOption(data: ParsedData, config: ChartConfig, base: EChartsOpt
     const categories = [...new Set(data.rows.map(row => String(row[xAxis])))];
     const pieData = categories.map(cat => {
         const matchingRows = data.rows.filter(row => String(row[xAxis]) === cat);
-        const values = matchingRows.map(r => Number(r[yAxis[0]]) || 0);
+        const values = matchingRows.map(r => parseNumeric(r[yAxis[0]]));
         return {
             name: cat,
             value: aggregate(values, aggregation),
@@ -416,7 +417,7 @@ function createRadarOption(data: ParsedData, config: ChartConfig, base: EChartsO
 
     // Get max values for each metric to normalize radar
     const maxValues = yAxis.map(metric =>
-        Math.max(...data.rows.map(row => Number(row[metric]) || 0))
+        Math.max(...data.rows.map(row => parseNumeric(row[metric])))
     );
 
     const indicator = yAxis.map((metric, i) => ({
@@ -431,7 +432,7 @@ function createRadarOption(data: ParsedData, config: ChartConfig, base: EChartsO
         const row = data.rows.find(r => String(r[xAxis]) === entity);
         return {
             name: entity,
-            value: yAxis.map(metric => Number(row?.[metric]) || 0),
+            value: yAxis.map(metric => parseNumeric(row?.[metric])),
         };
     });
 
@@ -468,7 +469,7 @@ function createHeatmapOption(data: ParsedData, config: ChartConfig, base: EChart
             const matchingRows = data.rows.filter(
                 row => String(row[xAxis]) === xCat && String(row[yColumn]) === yCat
             );
-            const value = matchingRows.reduce((sum, row) => sum + (Number(row[valueColumn]) || 0), 0);
+            const value = matchingRows.reduce((sum, row) => sum + parseNumeric(row[valueColumn]), 0);
             heatmapData.push([xIdx, yIdx, value]);
             values.push(value);
         });
