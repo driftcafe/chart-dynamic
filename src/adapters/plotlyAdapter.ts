@@ -146,7 +146,7 @@ function createBarData(data: ParsedData, config: ChartConfig) {
         layout: {
             ...baseLayout,
             barmode: 'group' as const,
-            xaxis: { ...baseLayout.xaxis, title: config.xAxis },
+            xaxis: { ...baseLayout.xaxis, title: { text: config.xAxis } },
         },
         config: baseConfig,
     };
@@ -168,7 +168,7 @@ function createStackedBarData(data: ParsedData, config: ChartConfig) {
         layout: {
             ...baseLayout,
             barmode: 'stack' as const,
-            xaxis: { ...baseLayout.xaxis, title: config.xAxis },
+            xaxis: { ...baseLayout.xaxis, title: { text: config.xAxis } },
         },
         config: baseConfig,
     };
@@ -191,7 +191,7 @@ function createLineData(data: ParsedData, config: ChartConfig) {
         data: traces,
         layout: {
             ...baseLayout,
-            xaxis: { ...baseLayout.xaxis, title: config.xAxis },
+            xaxis: { ...baseLayout.xaxis, title: { text: config.xAxis } },
         },
         config: baseConfig,
     };
@@ -215,7 +215,7 @@ function createAreaData(data: ParsedData, config: ChartConfig) {
         data: traces,
         layout: {
             ...baseLayout,
-            xaxis: { ...baseLayout.xaxis, title: config.xAxis },
+            xaxis: { ...baseLayout.xaxis, title: { text: config.xAxis } },
         },
         config: baseConfig,
     };
@@ -243,8 +243,8 @@ function createScatterData(data: ParsedData, config: ChartConfig) {
             data: traces,
             layout: {
                 ...baseLayout,
-                xaxis: { ...baseLayout.xaxis, title: xAxis },
-                yaxis: { ...baseLayout.yaxis, title: yAxis[0] },
+                xaxis: { ...baseLayout.xaxis, title: { text: xAxis } },
+                yaxis: { ...baseLayout.yaxis, title: { text: yAxis[0] } },
             },
             config: baseConfig,
         };
@@ -262,8 +262,8 @@ function createScatterData(data: ParsedData, config: ChartConfig) {
         data: traces,
         layout: {
             ...baseLayout,
-            xaxis: { ...baseLayout.xaxis, title: xAxis },
-            yaxis: { ...baseLayout.yaxis, title: yAxis[0] },
+            xaxis: { ...baseLayout.xaxis, title: { text: xAxis } },
+            yaxis: { ...baseLayout.yaxis, title: { text: yAxis[0] } },
         },
         config: baseConfig,
     };
@@ -306,8 +306,8 @@ function createBubbleData(data: ParsedData, config: ChartConfig) {
             data: traces,
             layout: {
                 ...baseLayout,
-                xaxis: { ...baseLayout.xaxis, title: xAxis },
-                yaxis: { ...baseLayout.yaxis, title: yAxis[0] },
+                xaxis: { ...baseLayout.xaxis, title: { text: xAxis } },
+                yaxis: { ...baseLayout.yaxis, title: { text: yAxis[0] } },
             },
             config: baseConfig,
         };
@@ -330,8 +330,8 @@ function createBubbleData(data: ParsedData, config: ChartConfig) {
         data: traces,
         layout: {
             ...baseLayout,
-            xaxis: { ...baseLayout.xaxis, title: xAxis },
-            yaxis: { ...baseLayout.yaxis, title: yAxis[0] },
+            xaxis: { ...baseLayout.xaxis, title: { text: xAxis } },
+            yaxis: { ...baseLayout.yaxis, title: { text: yAxis[0] } },
         },
         config: baseConfig,
     };
@@ -405,8 +405,8 @@ function createHeatmapData(data: ParsedData, config: ChartConfig) {
         data: traces,
         layout: {
             ...baseLayout,
-            xaxis: { ...baseLayout.xaxis, title: xAxis },
-            yaxis: { ...baseLayout.yaxis, title: yColumn },
+            xaxis: { ...baseLayout.xaxis, title: { text: xAxis } },
+            yaxis: { ...baseLayout.yaxis, title: { text: yColumn } },
         },
         config: baseConfig,
     };

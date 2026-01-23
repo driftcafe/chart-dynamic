@@ -151,7 +151,7 @@ function addTooltip(container: HTMLElement) {
 function addLegend(
     svg: d3.Selection<SVGGElement, unknown, null, undefined>,
     names: string[],
-    width: number,
+    _width: number,
     height: number
 ) {
     const legend = svg.append('g')
@@ -248,7 +248,7 @@ function renderGroupedBarChart(container: HTMLElement, data: ParsedData, config:
         .attr('height', d => height - y(d.value))
         .attr('fill', d => colors[d.colorIdx % colors.length])
         .attr('rx', 3)
-        .on('mouseover', function (event, d) {
+        .on('mouseover', function (_event, d) {
             d3.select(this).attr('opacity', 0.8);
             tooltip
                 .style('visibility', 'visible')
@@ -327,7 +327,7 @@ function renderStackedBarChart(container: HTMLElement, data: ParsedData, config:
         .attr('y', d => y(d[1]))
         .attr('height', d => y(d[0]) - y(d[1]))
         .attr('width', x.bandwidth())
-        .on('mouseover', function (event, d) {
+        .on('mouseover', function (_event, d) {
             d3.select(this).attr('opacity', 0.8);
             const value = d[1] - d[0];
             tooltip
@@ -415,7 +415,7 @@ function renderLineChart(container: HTMLElement, data: ParsedData, config: Chart
             .attr('cy', d => y(d.value))
             .attr('r', 5)
             .attr('fill', colors[i % colors.length])
-            .on('mouseover', function (event, d) {
+            .on('mouseover', function (_event, d) {
                 d3.select(this).attr('r', 7);
                 tooltip
                     .style('visibility', 'visible')
@@ -559,7 +559,7 @@ function renderScatterChart(container: HTMLElement, data: ParsedData, config: Ch
                 .attr('r', 8)
                 .attr('fill', colors[i % colors.length])
                 .attr('opacity', 0.7)
-                .on('mouseover', function (event, d) {
+                .on('mouseover', function (_event, d) {
                     d3.select(this).attr('r', 10).attr('opacity', 1);
                     tooltip
                         .style('visibility', 'visible')
@@ -588,7 +588,7 @@ function renderScatterChart(container: HTMLElement, data: ParsedData, config: Ch
             .attr('r', 8)
             .attr('fill', colors[0])
             .attr('opacity', 0.7)
-            .on('mouseover', function (event, d) {
+            .on('mouseover', function (_event, d) {
                 d3.select(this).attr('r', 10).attr('opacity', 1);
                 tooltip
                     .style('visibility', 'visible')
@@ -647,7 +647,7 @@ function renderPieChart(container: HTMLElement, data: ParsedData, config: ChartC
         .attr('fill', (_, i) => colors[i % colors.length])
         .attr('stroke', '#0f172a')
         .attr('stroke-width', 2)
-        .on('mouseover', function (event, d) {
+        .on('mouseover', function (_event, d) {
             d3.select(this).attr('opacity', 0.8);
             const percent = ((d.data.value / total) * 100).toFixed(1);
             tooltip

@@ -82,7 +82,6 @@ const baseOptions: ApexOptions = {
         zoom: { enabled: true },
         animations: {
             enabled: true,
-            easing: 'easeinout',
             speed: 500,
         },
     },
@@ -185,7 +184,7 @@ function createBarConfig(data: ParsedData, config: ChartConfig, stacked: boolean
             ...baseOptions,
             chart: {
                 ...baseOptions.chart,
-                type: 'bar',
+                type: 'bar' as const,
                 stacked,
             },
             plotOptions: {
@@ -216,7 +215,7 @@ function createLineConfig(data: ParsedData, config: ChartConfig) {
             ...baseOptions,
             chart: {
                 ...baseOptions.chart,
-                type: 'line',
+                type: 'line' as const,
             },
             xaxis: {
                 ...baseOptions.xaxis,
@@ -236,7 +235,7 @@ function createAreaConfig(data: ParsedData, config: ChartConfig) {
             ...baseOptions,
             chart: {
                 ...baseOptions.chart,
-                type: 'area',
+                type: 'area' as const,
             },
             fill: {
                 type: 'gradient',
@@ -278,7 +277,7 @@ function createScatterConfig(data: ParsedData, config: ChartConfig) {
                 ...baseOptions,
                 chart: {
                     ...baseOptions.chart,
-                    type: 'scatter',
+                    type: 'scatter' as const,
                 },
                 markers: { size: 10 },
                 xaxis: {
@@ -300,7 +299,7 @@ function createScatterConfig(data: ParsedData, config: ChartConfig) {
             ...baseOptions,
             chart: {
                 ...baseOptions.chart,
-                type: 'scatter',
+                type: 'scatter' as const,
             },
             markers: { size: 10 },
             xaxis: {
@@ -356,7 +355,7 @@ function createBubbleConfig(data: ParsedData, config: ChartConfig) {
                 ...baseOptions,
                 chart: {
                     ...baseOptions.chart,
-                    type: 'bubble',
+                    type: 'bubble' as const,
                 },
                 xaxis: {
                     ...baseOptions.xaxis,
@@ -377,7 +376,7 @@ function createBubbleConfig(data: ParsedData, config: ChartConfig) {
             ...baseOptions,
             chart: {
                 ...baseOptions.chart,
-                type: 'bubble',
+                type: 'bubble' as const,
             },
             xaxis: {
                 ...baseOptions.xaxis,
@@ -414,7 +413,7 @@ function createPieConfig(data: ParsedData, config: ChartConfig, isDoughnut: bool
             ...baseOptions,
             chart: {
                 ...baseOptions.chart,
-                type: 'pie',
+                type: 'pie' as const,
             },
             labels: categories,
             plotOptions: {
@@ -451,7 +450,7 @@ function createRadarConfig(data: ParsedData, config: ChartConfig) {
             ...baseOptions,
             chart: {
                 ...baseOptions.chart,
-                type: 'radar',
+                type: 'radar' as const,
             },
             xaxis: {
                 ...baseOptions.xaxis,
@@ -497,7 +496,7 @@ function createHeatmapConfig(data: ParsedData, config: ChartConfig) {
             ...baseOptions,
             chart: {
                 ...baseOptions.chart,
-                type: 'heatmap',
+                type: 'heatmap' as const,
             },
             xaxis: {
                 ...baseOptions.xaxis,
