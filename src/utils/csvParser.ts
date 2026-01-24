@@ -83,75 +83,74 @@ function isMetricColumn(type: ColumnType, uniqueValues: number, totalRows: numbe
 /**
  * Parse a CSV file and extract metadata
  */
-export function parseCSV(file: File): Promise<ParsedData> {
-    return new Promise((resolve, reject) => {
-        Papa.parse(file, {
-            header: true,
-            dynamicTyping: true,
-            skipEmptyLines: true,
-            complete: (results) => {
-                if (results.errors.length > 0) {
-                    const criticalErrors = results.errors.filter(e => e.type === 'Quotes' || e.type === 'Delimiter');
-                    if (criticalErrors.length > 0) {
-                        reject(new Error(`Parse error: ${criticalErrors[0].message}`));
-                        return;
-                    }
-                }
 
-                const rows = results.data as Record<string, unknown>[];
-                const headers = results.meta.fields || [];
-
-                if (rows.length === 0 || headers.length === 0) {
-                    reject(new Error('CSV file is empty or has no valid headers'));
-                    return;
-                }
-
-                // Analyze each column
-                const columns: ColumnMeta[] = headers.map(header => {
-                    const values = rows.map(row => row[header]);
-                    const nonNullValues = values.filter(v => v !== null && v !== undefined && v !== '');
-                    const uniqueValues = new Set(nonNullValues).size;
-                    const type = detectColumnType(values);
-
-                    return {
-                        name: header,
-                        type,
-                        isMetric: isMetricColumn(type, uniqueValues, rows.length),
-                        uniqueValues,
-                        sampleValues: nonNullValues.slice(0, 5) as (string | number | boolean | Date)[],
-                        nullCount: values.length - nonNullValues.length,
-                    };
-                });
-
-                resolve({
-                    columns,
-                    rows,
-                    fileName: file.name,
-                    rowCount: rows.length,
-                });
-            },
-            error: (error) => {
-                reject(new Error(`Failed to parse CSV: ${error.message}`));
-            },
-        });
-    });
+/**
+ * Transpose a 2D array (matrix)
+ */
+function transposeMatrix(matrix: unknown[][]): unknown[][] {
+    if (matrix.length === 0) return [];
+    return matrix[0].map((_, i) => matrix.map(row => row[i]));
 }
 
 /**
- * Parse CSV from string (for testing or direct input)
+ * Check if data appears to be transposed (headers in first column)
  */
-export function parseCSVString(csvString: string, fileName = 'data.csv'): ParsedData {
-    const results = Papa.parse(csvString, {
-        header: true,
-        dynamicTyping: true,
-        skipEmptyLines: true,
+function shouldTranspose(data: unknown[][]): boolean {
+    if (data.length < 2) return false;
+    const firstRow = data[0];
+    const totalCols = firstRow.length;
+    if (totalCols < 3) return false; // Too small to judge
+
+    // Count duplicates in first row (potential horizontal headers failure)
+    const firstRowStr = firstRow.map(String);
+    const uniqueFirstRow = new Set(firstRowStr);
+    const duplicateRatio = 1 - (uniqueFirstRow.size / totalCols);
+
+    // Count distinct values in first column (potential vertical headers)
+    const firstCol = data.map(r => String(r[0]));
+    const uniqueFirstCol = new Set(firstCol);
+    const colUniqueness = uniqueFirstCol.size / data.length;
+
+    // If row has significant duplicates (>30%) AND column is highly unique (>80%)
+    // This strongly suggests headers are vertical
+    return duplicateRatio > 0.3 && colUniqueness > 0.8;
+}
+
+/**
+ * Process raw row data into ParsedData structure
+ */
+function processRawData(rawData: unknown[][], fileName: string): ParsedData {
+    // Check for transposition
+    let dataToUse = rawData;
+    if (shouldTranspose(rawData)) {
+        console.log('Detected transposed CSV data. Transposing...');
+        dataToUse = transposeMatrix(rawData);
+    }
+
+    if (dataToUse.length === 0) {
+        throw new Error('CSV file is empty');
+    }
+
+    // Extract headers and rows
+    const headers = dataToUse[0].map(String);
+    const dataRows = dataToUse.slice(1);
+
+    if (headers.length === 0) {
+        throw new Error('No valid headers found');
+    }
+
+    // Convert to array of objects
+    const rows = dataRows.map(row => {
+        const obj: Record<string, unknown> = {};
+        headers.forEach((header, i) => {
+            obj[header] = row[i];
+        });
+        return obj;
     });
 
-    const rows = results.data as Record<string, unknown>[];
-    const headers = results.meta.fields || [];
-
-    const columns: ColumnMeta[] = headers.map(header => {
-        const values = rows.map(row => row[header]);
+    // Analyze columns
+    const columns: ColumnMeta[] = headers.map((header, i) => {
+        const values = dataRows.map(row => row[i]);
         const nonNullValues = values.filter(v => v !== null && v !== undefined && v !== '');
         const uniqueValues = new Set(nonNullValues).size;
         const type = detectColumnType(values);
@@ -172,4 +171,49 @@ export function parseCSVString(csvString: string, fileName = 'data.csv'): Parsed
         fileName,
         rowCount: rows.length,
     };
+}
+
+/**
+ * Parse a CSV file and extract metadata
+ */
+export function parseCSV(file: File): Promise<ParsedData> {
+    return new Promise((resolve, reject) => {
+        Papa.parse(file, {
+            header: false, // Read as arrays to detect structure
+            dynamicTyping: true,
+            skipEmptyLines: true,
+            complete: (results) => {
+                if (results.errors.length > 0) {
+                    const criticalErrors = results.errors.filter(e => e.type === 'Quotes' || e.type === 'Delimiter');
+                    if (criticalErrors.length > 0) {
+                        reject(new Error(`Parse error: ${criticalErrors[0].message}`));
+                        return;
+                    }
+                }
+
+                try {
+                    const parsedData = processRawData(results.data as unknown[][], file.name);
+                    resolve(parsedData);
+                } catch (err) {
+                    reject(err);
+                }
+            },
+            error: (error) => {
+                reject(new Error(`Failed to parse CSV: ${error.message}`));
+            },
+        });
+    });
+}
+
+/**
+ * Parse CSV from string (for testing or direct input)
+ */
+export function parseCSVString(csvString: string, fileName = 'data.csv'): ParsedData {
+    const results = Papa.parse(csvString, {
+        header: false,
+        dynamicTyping: true,
+        skipEmptyLines: true,
+    });
+
+    return processRawData(results.data as unknown[][], fileName);
 }
