@@ -23,6 +23,7 @@ import { createPlotlyData } from '../adapters/plotlyAdapter';
 import { createChartJsConfig, getChartJsType } from '../adapters/chartjsAdapter';
 import { createApexChartsConfig, getApexChartType } from '../adapters/apexchartsAdapter';
 import { renderD3Chart } from '../adapters/d3Adapter';
+import { useTheme } from '../hooks/useTheme';
 
 // Register Chart.js components
 ChartJS.register(
@@ -45,16 +46,19 @@ interface ChartContainerProps {
     library: Library;
 }
 
+
+
 export function ChartContainer({ data, config, library }: ChartContainerProps) {
     const d3ContainerRef = useRef<HTMLDivElement>(null);
+    const theme = useTheme();
 
     // Memoize chart configurations to prevent unnecessary re-renders
     const echartsOption = useMemo(() => {
         if (library === 'echarts') {
-            return createEChartsOption(data, config);
+            return createEChartsOption(data, config, theme);
         }
         return null;
-    }, [data, config, library]);
+    }, [data, config, library, theme]);
 
     const plotlyConfig = useMemo(() => {
         if (library === 'plotly') {

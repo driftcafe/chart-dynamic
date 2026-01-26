@@ -72,22 +72,35 @@ function aggregate(values: number[], method: string): number {
 /**
  * Generate ECharts options for various chart types
  */
-export function createEChartsOption(data: ParsedData, config: ChartConfig): EChartsOption {
+export function createEChartsOption(data: ParsedData, config: ChartConfig, theme: 'light' | 'dark' = 'dark'): EChartsOption {
     const { type } = config;
+    const isDark = theme !== 'light';
+
+    // Theme colors
+    const textColor = isDark ? '#e2e8f0' : '#475569';
+    const subTextColor = isDark ? '#94a3b8' : '#64748b';
+    const lineColor = isDark ? '#334155' : '#cbd5e1';
+    const splitLineColor = isDark ? '#1e293b' : '#e2e8f0';
+    const tooltipBg = isDark ? 'rgba(20, 20, 35, 0.95)' : 'rgba(255, 255, 255, 0.95)';
+    const tooltipText = isDark ? '#e2e8f0' : '#0f172a';
+    const tooltipBorder = isDark ? 'rgba(99, 102, 241, 0.3)' : 'rgba(99, 102, 241, 0.2)';
 
     const baseOption: EChartsOption = {
         backgroundColor: 'transparent',
         tooltip: {
             trigger: type === 'scatter' || type === 'bubble' ? 'item' : 'axis',
-            backgroundColor: 'rgba(20, 20, 35, 0.95)',
-            borderColor: 'rgba(99, 102, 241, 0.3)',
-            textStyle: { color: '#e2e8f0' },
+            backgroundColor: tooltipBg,
+            borderColor: tooltipBorder,
+            textStyle: { color: tooltipText },
+            padding: 12,
         },
         legend: {
             type: 'scroll',
             bottom: 10,
-            textStyle: { color: '#94a3b8' },
-            pageTextStyle: { color: '#94a3b8' },
+            textStyle: { color: subTextColor },
+            pageTextStyle: { color: subTextColor },
+            pageIconColor: subTextColor,
+            pageIconInactiveColor: isDark ? '#334155' : '#cbd5e1',
         },
         grid: {
             left: '3%',
@@ -102,8 +115,11 @@ export function createEChartsOption(data: ParsedData, config: ChartConfig): ECha
                 restore: {},
                 saveAsImage: {},
             },
-            iconStyle: { borderColor: '#94a3b8' },
+            iconStyle: { borderColor: subTextColor },
         },
+        // Defaults for axes (can be overridden)
+        xAxis: { axisLabel: { color: subTextColor }, axisLine: { lineStyle: { color: lineColor } }, splitLine: { lineStyle: { color: splitLineColor } } },
+        yAxis: { axisLabel: { color: subTextColor }, axisLine: { lineStyle: { color: lineColor } }, splitLine: { lineStyle: { color: splitLineColor } } },
     };
 
     switch (type) {

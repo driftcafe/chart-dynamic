@@ -5,6 +5,7 @@ import { ChartTypeSelector } from './components/ChartTypeSelector';
 import { MetricControls } from './components/MetricControls';
 import { ChartContainer } from './components/ChartContainer';
 import { DataPreview } from './components/DataPreview';
+import { ThemeToggle } from './components/ThemeToggle';
 import { getChartRecommendations, getDefaultChartConfig, getLibraryChartTypes } from './utils/chartRecommender';
 import type { ParsedData, ChartConfig, Library, ChartRecommendation, ChartType } from './types/types';
 import { BarChart3, Settings, Sparkles } from 'lucide-react';
@@ -68,7 +69,8 @@ function App() {
           </div>
           <span className="tagline">Multi-Library CSV Visualization</span>
         </div>
-        <div className="header-right">
+        <div className="header-right" style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+          <ThemeToggle />
           {data && (
             <button
               className="preview-toggle"
