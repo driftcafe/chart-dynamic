@@ -77,7 +77,6 @@ export function createEChartsOption(data: ParsedData, config: ChartConfig, theme
     const isDark = theme !== 'light';
 
     // Theme colors
-    const textColor = isDark ? '#e2e8f0' : '#475569';
     const subTextColor = isDark ? '#94a3b8' : '#64748b';
     const lineColor = isDark ? '#334155' : '#cbd5e1';
     const splitLineColor = isDark ? '#1e293b' : '#e2e8f0';
