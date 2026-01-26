@@ -60,7 +60,10 @@ export function ChartTypeSelector({
                             <div className="chart-type-icon">{info.icon}</div>
                             <span className="chart-type-name">{info.name}</span>
                             {isRecommended && (
-                                <span className="recommendation-badge">
+                                <span
+                                    className="recommendation-badge"
+                                    title={recommendationIndex === 0 ? "Best match" : "Good match"}
+                                >
                                     {recommendationIndex === 0 ? '★' : '•'}
                                 </span>
                             )}
