@@ -5,7 +5,7 @@
 
 /* CSS Custom Properties */
 :root {
-  /* Colors */
+  /* Colors - Dark mode */
   --bg-primary: #0a0a0f;
   --bg-secondary: #12121a;
   --bg-card: rgba(18, 18, 26, 0.8);
@@ -14,7 +14,7 @@
 
   --text-primary: #f1f5f9;
   --text-secondary: #94a3b8;
-  --text-muted: #64748b;
+  --text-muted: #758aa6;
 
   --accent-primary: #6366f1;
   --accent-secondary: #8b5cf6;
