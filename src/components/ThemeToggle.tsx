@@ -7,7 +7,6 @@ export function ThemeToggle() {
         if (typeof window !== 'undefined') {
             const saved = localStorage.getItem('theme');
             if (saved === 'light' || saved === 'dark') return saved;
-            if (window.matchMedia('(prefers-color-scheme: light)').matches) return 'light';
         }
         return 'dark';
     });
