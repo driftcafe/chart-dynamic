@@ -4,7 +4,7 @@ import { LibrarySelector } from './components/LibrarySelector';
 import { ChartTypeSelector } from './components/ChartTypeSelector';
 import { MetricControls } from './components/MetricControls';
 import { ChartContainer } from './components/ChartContainer';
-import { DataPreview } from './components/DataPreview';
+import { DataPreview, ColumnList } from './components/DataPreview';
 import { ThemeToggle } from './components/ThemeToggle';
 import { getChartRecommendations, getDefaultChartConfig, getLibraryChartTypes } from './utils/chartRecommender';
 import type { ParsedData, ChartConfig, Library, ChartRecommendation, ChartType } from './types/types';
@@ -77,7 +77,7 @@ function App() {
               onClick={() => setShowPreview(!showPreview)}
             >
               <Settings size={16} />
-              {showPreview ? 'Hide Preview' : 'Show Preview'}
+              {showPreview ? 'Hide Raw Data' : 'Show Raw Data'}
             </button>
           )}
         </div>
@@ -89,27 +89,23 @@ function App() {
           <div className="upload-section">
             <div className="upload-card">
               <div className="upload-header">
-                <Sparkles size={24} />
-                <h2>Get Started</h2>
-                <p>Upload a CSV file to visualize your data with 5 different charting libraries</p>
+
+                <h2>Visualize Your Data</h2>
+
               </div>
               <FileUpload onDataLoaded={handleDataLoaded} />
 
               <div className="features-preview">
                 <div className="feature">
-                  <span className="feature-icon">📊</span>
                   <span>5 Chart Libraries</span>
                 </div>
                 <div className="feature">
-                  <span className="feature-icon">🎯</span>
                   <span>Auto-Recommend</span>
                 </div>
                 <div className="feature">
-                  <span className="feature-icon">🔄</span>
                   <span>Multi-Select Metrics</span>
                 </div>
                 <div className="feature">
-                  <span className="feature-icon">⚡</span>
                   <span>Interactive Charts</span>
                 </div>
               </div>
@@ -120,17 +116,20 @@ function App() {
         {/* Main Dashboard (shown when data is loaded) */}
         {data && config && (
           <div className="dashboard">
-            {/* Sidebar */}
+            {/* Column List Sidebar */}
+            {showPreview && (
+              <aside className="column-list-sidebar">
+                <ColumnList data={data} />
+              </aside>
+            )}
+
+            {/* Main Sidebar */}
             <aside className="sidebar">
               <div className="sidebar-section">
                 <FileUpload onDataLoaded={handleDataLoaded} />
               </div>
 
-              {showPreview && (
-                <div className="sidebar-section">
-                  <DataPreview data={data} />
-                </div>
-              )}
+
 
               <div className="sidebar-section">
                 <LibrarySelector
@@ -147,6 +146,8 @@ function App() {
                   onChange={handleChartTypeChange}
                 />
               </div>
+
+
 
               <div className="sidebar-section">
                 <MetricControls
@@ -167,6 +168,13 @@ function App() {
                   <span className="badge metrics">{config.yAxis.length} metric{config.yAxis.length > 1 ? 's' : ''}</span>
                 </div>
               </div>
+
+              {showPreview && (
+                <div className="raw-data-panel">
+                  <DataPreview data={data} />
+                </div>
+              )}
+
               <div className="chart-wrapper">
                 <ChartContainer
                   data={data}

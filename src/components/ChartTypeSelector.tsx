@@ -1,15 +1,4 @@
-import {
-    BarChart3,
-    LineChart,
-    PieChart,
-    Activity,
-    Circle,
-    Grid3X3,
-    Target,
-    TrendingUp,
-    Layers,
-    BarChart2
-} from 'lucide-react';
+import { ChartTypeIcons } from './ChartTypeIcons';
 import type { ChartType, ChartRecommendation } from '../types/types';
 
 interface ChartTypeSelectorProps {
@@ -19,18 +8,18 @@ interface ChartTypeSelectorProps {
     onChange: (type: ChartType) => void;
 }
 
-const chartTypeInfo: Record<ChartType, { name: string; icon: React.ReactNode }> = {
-    'bar': { name: 'Bar', icon: <BarChart3 size={18} /> },
-    'grouped-bar': { name: 'Grouped Bar', icon: <BarChart2 size={18} /> },
-    'stacked-bar': { name: 'Stacked Bar', icon: <Layers size={18} /> },
-    'line': { name: 'Line', icon: <LineChart size={18} /> },
-    'area': { name: 'Area', icon: <TrendingUp size={18} /> },
-    'scatter': { name: 'Scatter', icon: <Circle size={18} /> },
-    'bubble': { name: 'Bubble', icon: <Activity size={18} /> },
-    'pie': { name: 'Pie', icon: <PieChart size={18} /> },
-    'doughnut': { name: 'Doughnut', icon: <PieChart size={18} /> },
-    'radar': { name: 'Radar', icon: <Target size={18} /> },
-    'heatmap': { name: 'Heatmap', icon: <Grid3X3 size={18} /> },
+const chartTypeInfo: Record<ChartType, { name: string; }> = {
+    'bar': { name: 'Bar' },
+    'grouped-bar': { name: 'Grouped Bar' },
+    'stacked-bar': { name: 'Stacked Bar' },
+    'line': { name: 'Line' },
+    'area': { name: 'Area' },
+    'scatter': { name: 'Scatter' },
+    'bubble': { name: 'Bubble' },
+    'pie': { name: 'Pie' },
+    'doughnut': { name: 'Doughnut' },
+    'radar': { name: 'Radar' },
+    'heatmap': { name: 'Heatmap' },
 };
 
 export function ChartTypeSelector({
@@ -57,7 +46,7 @@ export function ChartTypeSelector({
                             onClick={() => onChange(type)}
                             title={info.name}
                         >
-                            <div className="chart-type-icon">{info.icon}</div>
+                            <div className="chart-type-icon">{ChartTypeIcons[type]}</div>
                             <span className="chart-type-name">{info.name}</span>
                             {isRecommended && (
                                 <span

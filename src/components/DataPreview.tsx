@@ -12,30 +12,32 @@ const typeIcons = {
     boolean: <ToggleLeft size={14} />,
 };
 
+export function ColumnList({ data }: DataPreviewProps) {
+    return (
+        <div className="column-tags">
+            <span className="tags-label">Detected Columns</span>
+            {data.columns.map(col => (
+                <div key={col.name} className={`column-tag ${col.type}`}>
+                    {typeIcons[col.type]}
+                    <span className="tag-name">{col.name}</span>
+                    <span className="tag-type">{col.type}</span>
+                </div>
+            ))}
+        </div>
+    );
+}
+
 export function DataPreview({ data }: DataPreviewProps) {
     const previewRows = data.rows.slice(0, 5);
 
     return (
-        <div className="data-preview">
+        <div className="data-preview-table-view">
             <div className="preview-header">
                 <Database size={16} />
-                <span className="preview-title">{data.fileName}</span>
                 <span className="preview-stats">
                     {data.rowCount.toLocaleString()} rows • {data.columns.length} columns
                 </span>
             </div>
-
-            <div className="column-tags">
-                {data.columns.map(col => (
-                    <div key={col.name} className={`column-tag ${col.type}`}>
-                        {typeIcons[col.type]}
-                        <span className="tag-name">{col.name}</span>
-                        <span className="tag-type">{col.type}</span>
-                        {col.isMetric && <span className="tag-metric">metric</span>}
-                    </div>
-                ))}
-            </div>
-
             <div className="preview-table-container">
                 <table className="preview-table">
                     <thead>
